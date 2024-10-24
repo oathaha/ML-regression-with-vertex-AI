@@ -1,0 +1,37 @@
+
+name: 'my-pipeline'
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - '...'
+
+concurrency: ${{github.repository}}
+
+jobs:
+  my_job:
+    name: 'pipeline job'
+    runs-on: 'ubuntu-latest'
+
+  steps:
+    - name: 'Git checkout'
+      id: 'git-checkout'
+      uses: 'actions/checkout@v4'
+
+    - name: 'build docker container'
+      id: 'build docker container'
+      env:
+        GOOGLE_CREDENTIALS: ${{secrets.FOR_GCP}}
+      run: |
+        cd predict-house-price-xgboost
+        bash create-docker-image.sh
+
+    - name: 'fine-tune model'
+      id: 'fine-tune model'
+      env:
+        GOOGLE_CREDENTIALS: ${{secrets.FOR_GCP}}
+      run: |
+        python fine-tune-and-deploy-model.py
+
