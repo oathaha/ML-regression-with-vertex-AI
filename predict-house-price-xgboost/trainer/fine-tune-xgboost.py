@@ -82,7 +82,7 @@ model = train_model(train_data, train_labels)
 r2 = evaluate_model(model, test_data, test_labels)
 
 
-artifact_filename = 'xgb_model.pkl'
+artifact_filename = 'model.pkl'
 
 # Save model artifact to local filesystem (doesn't persist)
 local_path = artifact_filename
@@ -98,20 +98,3 @@ storage_path = os.path.join(model_directory, artifact_filename)
 blob = storage.blob.Blob.from_string(storage_path, client=storage.Client())
 blob.upload_from_filename(local_path)
 
-
-# save metric to local file system
-
-metric_filename = "xgb-metrics.json"
-
-with open(metric_filename, "w") as f:
-    f.write(f"{'r2: {r2}'}")
-
-logging.info("Saving metrics to {}/xgb-metrics.json". format(model_directory))
-
-storage_path = os.path.join(model_directory, metric_filename)
-blob = storage.blob.Blob.from_string(storage_path, client=storage.Client())
-blob.upload_from_filename(metric_filename)
-
-# gcs_metrics_path = os.path.join(model_directory, 'xgb-metrics.json')
-# with open(gcs_metrics_path, "w") as f:
-#     f.write(f"{'r2: {r2}'}")
