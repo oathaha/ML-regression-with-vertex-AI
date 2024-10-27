@@ -71,7 +71,7 @@ def train_model(train_data, train_labels):
         A trained Random Forest Regressor model with the specified hyperparameters.
     """
     
-    n_estimators = 3
+    n_estimators = 5
     max_depth = 20
     min_samples_split = 3
     min_samples_leaf = 3
