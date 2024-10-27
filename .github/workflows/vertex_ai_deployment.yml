@@ -21,6 +21,8 @@ jobs:
       with:
         project_id: 'house-price-prediction-439306'
         service_account: for-github-action@house-price-prediction-439306.iam.gserviceaccount.com
+        credentials_json: ${{ secrets.FOR_GCP }}
+
         # workload_identity_provider: 'projects/house-price-prediction-439306/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
 
     - name: Setup python
@@ -38,7 +40,7 @@ jobs:
       uses: google-github-actions/setup-gcloud@v2
       with:
         project_id: house-price-prediction-439306
-        # service_account_key: ${{ secrets.FOR_GCP }}
+        service_account_key: ${{ secrets.FOR_GCP }}
         version: '318.0.0'
         # install_components: 'gke-gcloud-auth-plugin'
         export_default_credentials: true
