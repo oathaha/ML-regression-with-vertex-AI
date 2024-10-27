@@ -25,7 +25,7 @@ jobs:
         export_default_credentials: true
 
     - name: install python SDK for google
-      run: pip install --upgrade google-api-python-client
+      run: pip install google.cloud
 
     # - name: build and push the docker image
     #   env:
