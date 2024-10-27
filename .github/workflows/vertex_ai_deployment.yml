@@ -16,12 +16,12 @@ jobs:
       id: git-checkout
       uses: actions/checkout@v4
 
-    # - name: authenticate gcloud
-    #   uses: google-github-actions/auth@v2
-    #   with:
-    #     project_id: 'house-price-prediction-439306'
-    #     credentials_json: ${{ secrets.FOR_GCP }}
-    #     # workload_identity_provider: 'projects/house-price-prediction-439306/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+    - name: authenticate gcloud
+      uses: google-github-actions/auth@v2
+      with:
+        project_id: 'house-price-prediction-439306'
+        service_account: for-github-action@house-price-prediction-439306.iam.gserviceaccount.com
+        # workload_identity_provider: 'projects/house-price-prediction-439306/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
 
     - name: Setup python
       uses: actions/setup-python@v4
