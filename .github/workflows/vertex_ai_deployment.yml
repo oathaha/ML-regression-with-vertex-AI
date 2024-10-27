@@ -11,10 +11,26 @@ jobs:
   build:
     runs-on: 'ubuntu-latest'
     steps:
-    
+
     - name: Git checkout
       id: git-checkout
       uses: actions/checkout@v4
+
+    - name: install the gcloud cli
+      uses: google-github-actions/setup-gcloud@v0
+      with:
+        project_id: ${{ secrets.FOR_GCP }}
+        service_account_key: ${{ secrets.FOR_GCP }}
+        install_components: 'gke-gcloud-auth-plugin'
+        export_default_credentials: true
+
+    - name: build and push the docker image
+      env:
+        GOOGLE_PROJECT: ${{ secrets.FOR_GCP }}
+      run: |
+        gcloud auth configure-docker us-central1-docker.pkg.dev
+        docker build -t us-central1-docker.pkg.dev/$GO0GLE_PROJECT/demo/nginx:latest .
+        docker push us-central1-docker.pkg.dev/$G00GLE_PROJECT/demo/nginx:latest
 
     - name: fine-tune model
       id: fine-tune-model  # Removed space in ID
