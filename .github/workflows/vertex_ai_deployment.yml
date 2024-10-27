@@ -33,7 +33,7 @@ jobs:
         export_default_credentials: true
 
     - name: export gcloud related env variable
-      run: export CLOUDSDK_PYTHON="/usr/bin/python3"
+      run: export CLOUDSDK_PYTHON="/usr/bin/python2"
 
     - name: install python SDK for google
       run: pip install --upgrade google-api-python-client google google.cloud google-cloud-aiplatform scikit-learn pandas 
