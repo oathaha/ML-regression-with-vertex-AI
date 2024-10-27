@@ -9,6 +9,11 @@ concurrency: ${{github.repository}}
 
 jobs:
   build:
+  
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+        
     runs-on: 'ubuntu-latest'
     steps:
 
@@ -20,8 +25,10 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         project_id: 'house-price-prediction-439306'
-        service_account: for-github-action@house-price-prediction-439306.iam.gserviceaccount.com
-        credentials_json: ${{ secrets.FOR_GCP }}
+        workload_identity_provider: projects/house-price-prediction-439306/locations/global/workloadIdentityPools/my-workload-pool
+/providers/my-workload-provider
+        # service_account: for-github-action@house-price-prediction-439306.iam.gserviceaccount.com
+        # credentials_json: ${{ secrets.FOR_GCP }}
 
         # workload_identity_provider: 'projects/house-price-prediction-439306/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
 
