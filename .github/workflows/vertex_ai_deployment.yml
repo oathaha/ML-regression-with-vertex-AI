@@ -21,8 +21,11 @@ jobs:
       with:
         project_id: house-price-prediction-439306
         service_account_key: ${{ secrets.FOR_GCP }}
-        install_components: 'gke-gcloud-auth-plugin'
+        # install_components: 'gke-gcloud-auth-plugin'
         export_default_credentials: true
+
+    - name: install python SDK for google
+      run: pip install --upgrade google-api-python-client
 
     # - name: build and push the docker image
     #   env:
