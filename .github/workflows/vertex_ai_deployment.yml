@@ -47,7 +47,7 @@ jobs:
       with:
         project_id: house-price-prediction-439306
         # service_account_key: ${{ secrets.FOR_GCP }}
-        version: '318.0.0'
+        # version: '430.0.0'
         # install_components: 'gke-gcloud-auth-plugin'
         # export_default_credentials: true
 
