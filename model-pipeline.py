@@ -39,7 +39,7 @@ aiplatform.init(project=project_id, staging_bucket=staging_bucket)
 # Create a Custom Training Job using Vertex AI
 job = aiplatform.CustomTrainingJob(
     display_name='RF for deployment',
-    script_path='./predict-house-price-for-deployment/trainer/fine-tune-RF.py',
+    script_path='./fine-tune-RF.py',
     container_uri=train_docker_img,
 )
 
