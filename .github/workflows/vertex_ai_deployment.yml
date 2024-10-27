@@ -15,6 +15,7 @@ jobs:
     name: 'pipeline job'
     runs-on: 'ubuntu-latest'
     steps:
+    
       - name: Git checkout
         id: git-checkout
         uses: actions/checkout@v4
