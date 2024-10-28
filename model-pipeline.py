@@ -16,105 +16,108 @@ args = parser.parse_args()
 logging.getLogger().setLevel(logging.INFO)
 
 
-# Function to generate a unique identifier
-def generate_uuid(length: int = 8) -> str:
-    """Generates a random UUID with specified length."""
-    return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
+# # Function to generate a unique identifier
+# def generate_uuid(length: int = 8) -> str:
+#     """Generates a random UUID with specified length."""
+#     return "".join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
-# Generate UUID for this model deployment session
-UUID = generate_uuid()
+# # Generate UUID for this model deployment session
+# UUID = generate_uuid()
 
-# Define GCS bucket paths
-project_id = args.project_id
-staging_bucket = args.staging_bucket
-MODEL_DIR = f"{staging_bucket}/{UUID}"
+# # Define GCS bucket paths
+# project_id = args.project_id
+# staging_bucket = args.staging_bucket
+# MODEL_DIR = f"{staging_bucket}/{UUID}"
 
-# Define container images for training and testing
-train_docker_img = 'us-docker.pkg.dev/vertex-ai/training/sklearn-cpu.1-0:latest'
-test_docker_img = 'us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.1-0:latest'
+# # Define container images for training and testing
+# train_docker_img = 'us-docker.pkg.dev/vertex-ai/training/sklearn-cpu.1-0:latest'
+# test_docker_img = 'us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.1-0:latest'
 
-# Initialize Vertex AI platform with specified project and staging bucket
-aiplatform.init(project=project_id, staging_bucket=staging_bucket)
+# # Initialize Vertex AI platform with specified project and staging bucket
+# aiplatform.init(project=project_id, staging_bucket=staging_bucket)
 
-# Create a Custom Training Job using Vertex AI
-job = aiplatform.CustomTrainingJob(
-    display_name='RF for deployment',
-    script_path='./fine-tune-RF.py',
-    container_uri=train_docker_img,
-)
+# # Create a Custom Training Job using Vertex AI
+# job = aiplatform.CustomTrainingJob(
+#     display_name='RF for deployment',
+#     script_path='./fine-tune-RF.py',
+#     container_uri=train_docker_img,
+# )
 
-logging.info('Training model...')
+# logging.info('Training model...')
 
-# Run training job with the dataset URL as an argument
-job.run(base_output_dir=MODEL_DIR, sync=True, args=[f"--dataset-url={args.train_dataset_url}", f"--staging_bucket={staging_bucket}"])
+# # Run training job with the dataset URL as an argument
+# job.run(base_output_dir=MODEL_DIR, sync=True, args=[f"--dataset-url={args.train_dataset_url}", f"--staging_bucket={staging_bucket}"])
 
-logging.info('Training completed')
-
-
-# Define model path for deployment
-MODEL_DIR += "/model"
-model_path_to_deploy = MODEL_DIR
+# logging.info('Training completed')
 
 
-# Upload the trained model to Vertex AI
-model = aiplatform.Model.upload(
-    display_name='house-price-prediction-for-deployment',
-    artifact_uri=MODEL_DIR,
-    serving_container_image_uri=test_docker_img,
-    sync=True
-)
-
-model.wait()
-logging.info('Model upload completed')
+# # Define model path for deployment
+# MODEL_DIR += "/model"
+# model_path_to_deploy = MODEL_DIR
 
 
-# Set parameters for batch prediction
-MIN_NODES = 1
-MAX_NODES = 1
+# # Upload the trained model to Vertex AI
+# model = aiplatform.Model.upload(
+#     display_name='house-price-prediction-for-deployment',
+#     artifact_uri=MODEL_DIR,
+#     serving_container_image_uri=test_docker_img,
+#     sync=True
+# )
 
-# Run batch prediction job on test data
-batch_predict_job = model.batch_predict(
-    job_display_name='rf-batch-prediction',
-    gcs_source=args.test_dataset_url,
-    gcs_destination_prefix=staging_bucket,
-    instances_format="jsonl",
-    predictions_format="jsonl",
-    model_parameters=None,
-    machine_type="n1-standard-2",
-    starting_replica_count=MIN_NODES,
-    max_replica_count=MAX_NODES,
-    sync=True,
-)
-
-logging.info("Running batch prediction job")
-
-batch_predict_job.wait()
-
-logging.info("Batch prediction completed")
+# model.wait()
+# logging.info('Model upload completed')
 
 
-# Retrieve and parse batch prediction results
-bp_iter_outputs = batch_predict_job.iter_outputs()
-prediction_results = []
+# # Set parameters for batch prediction
+# MIN_NODES = 1
+# MAX_NODES = 1
 
-for blob in bp_iter_outputs:
-    if blob.name.split("/")[-1].startswith("prediction.results"):
-        prediction_results.append(blob.name)
+# # Run batch prediction job on test data
+# batch_predict_job = model.batch_predict(
+#     job_display_name='rf-batch-prediction',
+#     gcs_source=args.test_dataset_url,
+#     gcs_destination_prefix=staging_bucket,
+#     instances_format="jsonl",
+#     predictions_format="jsonl",
+#     model_parameters=None,
+#     machine_type="n1-standard-2",
+#     starting_replica_count=MIN_NODES,
+#     max_replica_count=MAX_NODES,
+#     sync=True,
+# )
+
+# logging.info("Running batch prediction job")
+
+# batch_predict_job.wait()
+
+# logging.info("Batch prediction completed")
 
 
-# Process prediction results into a list
-results = []
-for prediction_result in prediction_results:
-    gfile_name = f"gs://{bp_iter_outputs.bucket.name}/{prediction_result}"
-    content = blob.download_as_string().decode().split('\n')
+# # Retrieve and parse batch prediction results
+# bp_iter_outputs = batch_predict_job.iter_outputs()
+# prediction_results = []
+
+# for blob in bp_iter_outputs:
+#     if blob.name.split("/")[-1].startswith("prediction.results"):
+#         prediction_results.append(blob.name)
+
+
+# # Process prediction results into a list
+# results = []
+# for prediction_result in prediction_results:
+#     gfile_name = f"gs://{bp_iter_outputs.bucket.name}/{prediction_result}"
+#     content = blob.download_as_string().decode().split('\n')
     
-    for line in content:
-        if line.strip():
-            results.append(json.loads(line)['prediction'])
+#     for line in content:
+#         if line.strip():
+#             results.append(json.loads(line)['prediction'])
 
 
 # Load test dataset and calculate R2 score for model evaluation
+logging.info('Read test data from', args.test_dataset_url)
 test_df = pd.read_csv(args.test_dataset_url)
+
+logging.info('column names:', test_df.columns)
 labels = test_df['target_col'].tolist()
 
 r2 = r2_score(labels, results)
