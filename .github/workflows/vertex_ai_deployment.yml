@@ -25,7 +25,7 @@ jobs:
       uses: google-github-actions/auth@v2
       with:
         project_id: 'house-price-prediction-439306'
-        workload_identity_provider: 'projects/898780699062/locations/global/workloadIdentityPools/my-workload-pool/providers/my-workload-provider'
+        # workload_identity_provider: 'projects/898780699062/locations/global/workloadIdentityPools/my-workload-pool/providers/my-workload-provider'
         service_account: 'for-github-action-2@house-price-prediction-439306.iam.gserviceaccount.com'
         credentials_json: ${{ secrets.FOR_GCP }}
 
