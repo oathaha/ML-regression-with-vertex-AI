@@ -97,7 +97,7 @@ model = train_model(train_data, train_labels)
 
 
 ## Save model artifact to local filesystem (doesn't persist)
-artifact_filename = 'RF_model.pkl'
+artifact_filename = 'model.pkl'
 local_path = artifact_filename
 
 with open(local_path, 'wb') as f:
@@ -106,7 +106,7 @@ with open(local_path, 'wb') as f:
 ## Upload model artifact to Cloud Storage
 model_directory = os.environ['AIP_MODEL_DIR']
 
-logging.info("Saving metrics to {}/{}". format(model_directory, artifact_filename))
+logging.info("Saving model to {}/{}". format(model_directory, artifact_filename))
 
 storage_path = os.path.join(model_directory, artifact_filename)
 blob = storage.blob.Blob.from_string(storage_path, client=storage.Client())
