@@ -46,7 +46,7 @@ job = aiplatform.CustomTrainingJob(
 logging.info('Training model...')
 
 # Run training job with the dataset URL as an argument
-job.run(base_output_dir=MODEL_DIR, sync=True, args=[f"--dataset-url={args.train_dataset_url} --staging_bucket={staging_bucket}"])
+job.run(base_output_dir=MODEL_DIR, sync=True, args=[f"--dataset-url={args.train_dataset_url}", f"--staging_bucket={staging_bucket}"])
 
 logging.info('Training completed')
 
