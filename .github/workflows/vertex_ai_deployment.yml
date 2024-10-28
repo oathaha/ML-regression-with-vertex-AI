@@ -38,7 +38,7 @@ jobs:
       run: export CLOUDSDK_PYTHON="/usr/bin/python3"
 
     - name: install python SDK for google
-      run: pip install --upgrade google-api-python-client google google.cloud google-cloud-aiplatform scikit-learn pandas==2.0.3
+      run: pip install --upgrade google-api-python-client google google.cloud google-cloud-aiplatform scikit-learn pandas fsspec
 
     - name: install the gcloud cli
       uses: google-github-actions/setup-gcloud@v2
