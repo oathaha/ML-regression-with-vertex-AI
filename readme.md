@@ -44,6 +44,6 @@ Follow the steps below to prepare source code to run with your Google Cloud Plat
 1. Go to the forked repository
 2. Open `.github/workflows/vertex_ai_deployment.yml`
 3. At the line `name: authenticate gcloud`,  make changes at `project_id` and `service_account` to match your project. Also, change `FOR_GCP` to match your name of secret that is created in step 2.9.
-4. At the line `name: fine-tune model`, make changes at the arguments `--project_id`, `--staging_bucket`, `--train_dataset_url` and `--test_dataset_url` to match your project and your file in your bucket
+4. At the line `name: fine-tune model`, make changes at the arguments `--project_id`, `--staging_bucket`, `--train_dataset_url`, `--test_dataset_no_label_url` and `test_dataset_with_label_url` to match your project and your file in your bucket
 	
 After the script files are commited and pushed, go to tab `Actions`  of the forked repository to view the newly created pipeline. You can also go to your Google Cloud Platform to see that a model is trained on VertexAI and is saved to the bucket in your project.

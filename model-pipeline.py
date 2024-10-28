@@ -9,7 +9,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--project_id', type=str, required=True, help="GCP project ID")
 parser.add_argument('--staging_bucket', type=str, required=True, help="GCS bucket for staging artifacts")
 parser.add_argument("--train_dataset_url", type=str, required=True, help="URL for training dataset")
-parser.add_argument('--test_dataset_url', type=str, required=True, help="URL for test dataset")
+parser.add_argument('--test_dataset_no_label_url', type=str, required=True, help="URL for test dataset")
+parser.add_argument('--test_dataset_with_label_url', type=str, required=True, help="URL for test dataset")
 args = parser.parse_args()
 
 # Set logging level to INFO
@@ -75,7 +76,7 @@ MAX_NODES = 1
 # Run batch prediction job on test data
 batch_predict_job = model.batch_predict(
     job_display_name='rf-batch-prediction',
-    gcs_source=args.test_dataset_url,
+    gcs_source=args.test_dataset_no_label_url,
     gcs_destination_prefix=staging_bucket,
     instances_format="jsonl",
     predictions_format="jsonl",
@@ -114,8 +115,8 @@ for prediction_result in prediction_results:
 
 
 # Load test dataset and calculate R2 score for model evaluation
-logging.info('Read test data from', args.test_dataset_url)
-test_df = pd.read_csv(args.test_dataset_url)
+logging.info('Read test data from', args.test_dataset_with_label_url)
+test_df = pd.read_csv(args.test_dataset_with_label_url)
 labels = test_df['target_col'].tolist()
 
 r2 = r2_score(labels, results)
